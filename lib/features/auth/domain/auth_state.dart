@@ -7,6 +7,6 @@ class AuthState {
 
   factory AuthState.signedOut() => const AuthState(isAuthenticated: false);
 
-  factory AuthState.signedIn({required String token, required String email}) =>
+  factory AuthState.signedIn({required String token, String? email}) =>
       AuthState(isAuthenticated: true, token: token, email: email);
 }

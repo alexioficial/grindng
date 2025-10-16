@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grindng/core/router/app_router.dart';
+import 'package:grindng/core/ui/toast_service.dart';
 import 'package:grindng/features/auth/application/auth_controller.dart';
 import 'package:grindng/features/auth/data/auth_repository.dart';
 import 'package:grindng/features/auth/shared/auth_scope.dart';
@@ -18,6 +19,15 @@ class _AppRootState extends State<AppRoot> {
   void initState() {
     super.initState();
     _authController = AuthController(AuthRepository());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _authController.hydrate();
+      if (!mounted) return;
+      if (_authController.state.isAuthenticated) {
+        Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+      } else {
+        Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+      }
+    });
   }
 
   @override
@@ -36,6 +46,7 @@ class _AppRootState extends State<AppRoot> {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
+        scaffoldMessengerKey: toastMessengerKey,
         onGenerateRoute: onGenerateAppRoute,
         initialRoute: _authController.state.isAuthenticated ? AppRoutes.home : AppRoutes.login,
       ),

@@ -30,8 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      // Error toasts are handled globally by ApiClient via ToastService.
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -40,7 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ingresar')),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Ingresar'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

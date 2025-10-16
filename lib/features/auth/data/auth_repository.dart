@@ -1,13 +1,26 @@
+import 'package:grindng/core/network/api_client.dart';
+
 class AuthRepository {
+  final ApiClient _api;
+
+  AuthRepository({ApiClient? api}) : _api = api ?? ApiClient();
+
   Future<String> signIn({required String email, required String password}) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (email.isEmpty || password.isEmpty) {
-      throw Exception('Credenciales inválidas');
+    final data = await _api.post(
+      '/login',
+      body: {
+        'email': email,
+        'password': password,
+      },
+    );
+    final token = (data is Map && data['token'] is String) ? data['token'] as String : null;
+    if (token == null) {
+      throw ApiError(message: 'Token no encontrado en la respuesta', data: data);
     }
-    return 'token_${DateTime.now().millisecondsSinceEpoch}';
+    return token;
   }
 
   Future<void> signOut() async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    // If server needs logout call, use _api.post('/auth/logout') here.
   }
 }
